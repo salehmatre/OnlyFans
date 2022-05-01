@@ -1,0 +1,78 @@
+
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% endblock links %}
+
+{% block title %}<title>Home</title>{% endblock title %}
+
+{% block body %}
+
+
+      <div class="parent">
+        <div class="block" style="margin-top: 30px; border-radius: 20px; height: 100%; padding-bottom: 1px;">
+            <br>
+            <h2 class='title' style="font-family:'Times New Roman', Times, serif;">Интересное</h2>
+            <br>
+        {% if posts %}
+        {% for el in posts %}
+          {% autoescape off %}
+            <div class="card mb-5" style="border-radius: 20px; margin-left: 10px; margin-right: 10px; padding-bottom: 30px;">
+                <div class="card-header">
+                    {{el.created_at}}
+                </div>
+                <div class="card-body" >
+                    <p class="card-title" style="font-style: italic; font-size: 20px;">Название: "{{ el.title }}"</p>
+                    <p class="card-text" style="font-size: small;">{{ el.text|truncatewords:20 }}</p>
+                    <a href="{% url 'read' pk=el.id %}" class="btn btn-primary">Read</a>
+                </div>
+                <div class="card-header">
+                  {% if el.tag %}
+                  Tag: <a href="{% url 'tagview' tag=el.tag%}">{{ el.tag }}</a>
+                  {% else %}
+                  Tag: <a href="#">Тэга нет</a>
+                  {% endif %}
+              </div>
+            </div>
+          {% endautoescape %}
+        {% endfor %}
+        {% else %}
+            <h6 style="text-align: center; font-size: 50px; margin-top: 20px;
+             margin-bottom: 50px; font-family:'Times New Roman', Times, serif;">Пока нет никаких публикаций ;(</h6>
+            <center><img src="https://media.giphy.com/media/MarYoZ2BIJUimKydXa/giphy.gif" alt="sorry" style="margin-bottom: 50px;"></center>
+        {% endif %}
+      </div>
+    </div>
+      <div id='pagination' style="margin-left: 660px; margin-top: 20px;">
+        <nav aria-label="Page navigation example">
+            {% if posts.has_other_pages %}
+            <ul class="pagination">
+              {% if posts.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Предыдущая</a></li>
+              {% endif %}
+              {% for i in posts.paginator.page_range %}
+                {% if posts.number == i %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% elif i >  posts.number|add:-2 and i < posts.number|add:2 %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if posts.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Следующая</a></li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+        </div>
+    {% endblock body %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bubbly-bg@1.0.0/dist/bubbly-bg.js"></script>
+<script src="{% static 'js/bubbly-bg.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock js %}
